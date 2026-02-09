@@ -1,38 +1,29 @@
 import express from 'express';
+import path from "path";
+import { URL } from "url";
+import router from "./route.js";
+
 const app = express();
 const PORT = 3000;
 
-// log the url
+// middleware: log the url
 let logger = (req, res, next) => {
     console.log(`url: ${req.url}`);
-    return next();
+    next();
 }
 
 // middleware added to each request
 app.use(logger);
 
-// check if user is logged in
-let auth = (req, res, next) => {
-    if(true)
-        return next();
-stack
-    // redirect to sign in page
-    res.redirect('/signin');
-}
+// make all files inside /public available using static
+const __filename = new URL("", import.meta.url).pathname;
+const __dirname = new URL(".", import.meta.url).pathname;
+app.use(express.static(path.join(__dirname, './public')));
 
-// add middleware to this request only
-app.get('./dashboard', auth, (req, res) => {
-    res.send('Hello Admin!')
-})
+// import file for routes
+app.use('/', router);
 
-app.get('/', (req, res) => {
-    res.send('Hello!')
-});
-
-app.get('/api', (req, res) => {
-    res.json({ "message:": "Hello, world!"} )
-});
-
+// start server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
